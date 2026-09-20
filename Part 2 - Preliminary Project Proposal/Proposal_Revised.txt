@@ -1,0 +1,291 @@
+CISC7204 Data Science and Data Visualization
+
+
+Assignment 01 — Preliminary Project Proposal
+
+
+Attack and Defence in the 2025/26 English Premier League
+
+
+TANG CHI IN (MC66014-6)
+CHEN IAT HONG (MC65410-2)
+
+
+14 September 2026
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+================================================================
+[Word 排版備註：以上為封面頁。請於 Word 中將這幾行改為置中，
+課程名稱字級約 20 pt、Assignment 字級 16 pt、題目字級 18 pt 加粗，
+姓名字級 14 pt，日期 12 pt。整份文件字體 Times New Roman，
+段落 1.5 倍行距，本頁末插入分頁符號。]
+================================================================
+
+
+
+
+1. Project topic and research question
+
+Region: England. Domain: sports and football analytics. The project
+examines the 2025/26 English Premier League using match records and
+player statistics. The principal question is:
+
+    How are team attacking and defensive indicators associated with
+    league points during the 2025/26 season?
+
+Two supporting questions are examined. First, are the differences in
+attacking activity between home and away matches consistent across
+teams? Second, after considering position and playing time, does
+player age relate to scoring output? A preliminary look at the
+season-2526 data already suggests that attacking and defensive
+indicators correlate with points at similar magnitudes (Pearson
+r ≈ +0.91 for goals scored per match, r ≈ −0.90 for goals conceded
+per match); the report therefore compares the strength and direction
+of these associations rather than presuming either side is more
+important.
+
+
+2. Project purpose
+
+Outcomes. The project connects the course workflow — importing,
+cleaning, exploring and visualising data — to a concrete football
+question. It will produce a reproducible notebook and an evidence-
+based account of what the available data can and cannot show.
+
+Skills. The work practises Pandas filtering, data-type conversion,
+duplicate and missing-value checks, team-name reconciliation, group
+aggregation and joins. On the analysis side it develops chart
+selection, correlation analysis, paired statistical comparisons and
+the interpretation of uncertainty.
+
+Knowledge. The project builds understanding of three distinctions
+that are easy to conflate in football data: player-, match- and
+team-level observations; playing-time exposure and its effect on
+scoring rates; and association versus causation. Comparing two
+sources also illustrates why apparently similar football indicators
+may use different definitions.
+
+
+3. Datasets and scope
+
+Dataset 1 — season-2526.csv.
+The file contains 380 match records for the 20 Premier League clubs,
+dated 15 August 2025 to 24 May 2026. Fields include team names,
+full-time and half-time scores and results, referees, shots, shots
+on target, corners, fouls and cards. Each team has 38 match
+appearances. Points are calculated from results using three for a
+win and one for a draw; administrative deductions are not applied.
+Format matches the football-data.co.uk historical-results
+convention (columns FTHG, FTAG, HS, AS, HST, AST, HC, AC, HY, AY,
+HR, AR).
+Public download link:  [待補：填入原始下載 URL]
+Publisher and collection date:  [待補：例如 football-data.co.uk，
+擷取日期 YYYY-MM-DD]
+
+Dataset 2 — players_data-2025_2026.csv.
+The file contains 2,839 player records across five leagues in the
+FBref standard-stats + goalkeeper + shooting + playing-time schema.
+Filtering the competition field to the Premier League produces 551
+player-team records covering the same 20 clubs. Available variables
+include age, position, minutes, goals, assists and goalkeeper
+statistics (goals against, saves, save percentage, clean sheets).
+Public download link:  [待補：填入原始下載 URL]
+Publisher and collection date:  [待補：例如 FBref/StatsBomb 或
+Kaggle dump，擷取日期 YYYY-MM-DD]
+
+The two files are stored unchanged next to Football_Combined_Analysis
+.ipynb. Original links, collection dates and field definitions will
+be recorded in the notebook’s data-provenance cell before submission.
+The analysis does not assume that filenames alone establish matching
+coverage or provenance.
+
+
+4. Project tasks and deliverables
+
+4.1 Data inspection and cleaning
+Inspect each dataset with preview, shape, dtype and descriptive
+summaries. Validate that match-result codes are in {H, D, A}, that
+counts are non-negative, that match keys (Date + HomeTeam + AwayTeam)
+are unique, and that shots on target do not exceed total shots.
+Filter Premier League players and standardise team names across the
+two sources. Goalkeeper-only fields for outfield players are left
+missing — not imputed with an overall mean or zero.
+
+4.2 Feature engineering and aggregation
+Convert each match record into two team-perspective rows and
+aggregate points, goals scored, goals conceded and shooting
+activity. Compute per-match measures, shot accuracy and an aggregate
+goals-to-shots ratio. Aggregate goalkeeper saves and shots faced
+before deriving save rates, then reconcile totals against the
+match-level source.
+
+4.3 Analysis and visualisation
+Compute Pearson and Spearman correlations between team-level
+indicators and points. Produce the attack–defence two-panel figure
+(Figure 1). Test paired home-versus-away differences in shots, shots
+on target and corners. Summarise cards descriptively. Explore
+player-level scoring against age using goals per 90 minutes with
+position groups and a minutes threshold.
+
+Deliverables:
+  - Executed English notebook Football_Combined_Analysis.ipynb with
+    tables and charts.
+  - This 2–5 page Word proposal.
+  - A documented source list embedded in the notebook.
+
+A notebook checklist tracks validation, source reconciliation,
+figure labels and reproducibility; no separate worksheet is required
+for this workflow.
+
+
+5. Statistical approach and visualisation
+
+Team-level correlations. Pearson and Spearman coefficients are
+computed between end-of-season points and each of: goals scored per
+match, goals conceded per match, shots per match, shot accuracy,
+opponent shots on target per match, and goalkeeper save rate.
+Preliminary values are given in Table 1.
+
+Table 1. Preliminary team-level correlations with points (n = 20).
+
+    Indicator                     Pearson   Spearman
+    Goals scored per match         +0.908    +0.829
+    Goals conceded per match       −0.900    −0.754
+    Shots per match                +0.810    +0.766
+    Shot accuracy                  +0.131    +0.191
+    Opponent SoT per match         −0.837    −0.635
+    Save rate                      +0.417    +0.434
+
+Predictive check. As an exploratory supplement, leave-one-out
+cross-validation was run on two single-feature linear regressions:
+one using goals scored per match, the other using goals conceded
+per match. The defence-only model produced a lower LOO MAE
+(≈ 6.35 points, R² ≈ 0.72) than the attack-only model
+(≈ 8.71 points, R² ≈ 0.55). This preliminary difference is
+reported for interest and will be revisited with the caveat that
+n = 20 makes any advantage unstable.
+
+Home-versus-away tests. For shots, shots on target and corners,
+two-sided paired t-tests will examine whether the mean home-minus-
+away within-match difference equals zero. Reported outputs include
+mean differences, 95% pointwise confidence intervals, t statistics,
+effect sizes (Cohen’s d for paired data) and Holm-adjusted p-values
+across the three tests. Because teams recur across matches, the
+independence assumption between paired differences is only an
+approximation; these tests will be treated as exploratory rather
+than as proof of a causal home effect.
+
+Player-level exploration. Goals per 90 minutes are computed for
+outfield players. The main eligibility threshold is 900 minutes,
+with 450 and 1,350 minutes as sensitivity checks. Comparisons by
+age and position are descriptive and do not isolate an independent
+age effect. Red and yellow cards are summarised descriptively.
+
+Figure 1. Same-season relationships between scoring, conceding and
+calculated points (see attack_defence.png in the project folder;
+please insert here in Word). Each point represents one team; the
+common vertical axis makes the direction and strength of the two
+relationships directly comparable, while the scatter shows that
+teams with similar scoring or defensive records may still finish on
+different point totals. The fitted lines describe this season only
+and do not forecast future performance.
+
+
+6. Data limitations and planned refinement
+
+The goalkeeper and match sources disagree on shots-on-target totals
+for all 20 teams; Chelsea also shows a two-goal difference in
+goalkeeper goals conceded. Field definitions and coverage will be
+investigated before any goalkeeper measure is used to support
+headline conclusions.
+
+The single-season team analysis has only 20 observations, and
+goals are mechanically related to the rules used to calculate
+points. Findings therefore remain descriptive and season-specific.
+Multi-season replication and methods that address repeated-team
+dependence are potential later extensions, not parts of this
+proposal.
+
+
+7. Criteria for success
+
+Success is defined by the checklist below. Statistical significance
+is not a success requirement; a clear null or weak relationship is
+also a valid finding.
+
+  [ ] Both original dataset URLs, publishers, collection dates and
+      relevant field definitions are documented in the notebook.
+  [ ] The notebook runs in order from a fresh kernel using only the
+      two CSV files, without errors or manual edits between cells.
+  [ ] Team names match across sources; match keys are unique;
+      every team has 38 records; and the calculated goal and point
+      totals pass reconciliation checks.
+  [ ] Missing-value decisions and source discrepancies are visible
+      in the notebook; unresolved goalkeeper metrics are excluded
+      from substantive conclusions.
+  [ ] Charts have readable titles, axis labels and units. Tables
+      identify the observation level and the denominators used for
+      rates.
+  [ ] Paired comparisons report effect sizes, uncertainty and
+      multiplicity adjustment, and state the repeated-team
+      limitation.
+  [ ] The report answers the main question, distinguishes
+      supporting analyses, and avoids causal or predictive claims
+      unsupported by the design.
+
+
+8. Proposed collaboration
+
+The proposed pair consists of TANG CHI IN (MC66014-6) and
+CHEN IAT HONG (MC65410-2). The allocation below is a working plan
+and will be confirmed against the instructor’s rules for individual
+or pair proposals. Each student submits their own required file;
+sharing an analysis does not authorise submitting identical text.
+
+TANG CHI IN will coordinate the project, maintain the notebook
+structure, reconcile team names and sources, and lead the team-
+level attack–defence analysis. He will also act as project liaison
+for instructor questions.
+
+CHEN IAT HONG will lead the home-versus-away comparisons, review
+the paired tests and player-level exploration, and track progress
+against the checklist in Section 7. He will maintain meeting and
+decision notes as project scribe.
+
+Both members will check each other’s calculations, review figures
+and contribute to the written interpretation. Ground rules: keep
+raw data unchanged; retain both original notebooks; work from one
+agreed combined version; record substantive edits. Disagreements
+will be resolved by returning to the data and definitions, with
+unresolved issues logged rather than concealed. Any collaboration
+restrictions confirmed by the instructor take priority over this
+proposed arrangement.
+
+
+9. Completion and submission plan
+
+Before submission the team will (i) replace the dataset provenance
+placeholders in Section 3, (ii) confirm the collaboration
+arrangement in Section 8, (iii) review the main findings together,
+and (iv) rerun the notebook end-to-end from a fresh kernel.
+
+The Word proposal will be submitted to the Individual Project
+Proposal link on the correct class SUPPORT UMMoodle site by
+20 September 2026, 11:00 pm. Filenames:
+  - TANG CHI IN:   CISC7204-Assgn01-MC660146-PreliminaryProjectProposal.docx
+  - CHEN IAT HONG: CISC7204-Assgn01-MC654102-PreliminaryProjectProposal.docx
+
+Each member will use their own student ID in the filename and
+follow the instructor’s confirmed authorship requirements.
